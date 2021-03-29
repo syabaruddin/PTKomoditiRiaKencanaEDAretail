@@ -1,0 +1,397 @@
+---
+title: "PT Komoditi Ria Kencana"
+subtitle : "Exploratory Product Data Analysis Report"
+author: "Syabaruddin Malik"
+date: "3/29/2021"
+output: 
+  prettydoc::html_pretty:
+      theme: leonids
+      highlight: github
+      df_print : paged
+
+---
+
+# 1. Background
+
+![](C:\SyabaruddinFolder\Work\Algoritma\DATAVIZcourse\P4DS\Inclass P4DS Newton Night-20210315T110229Z-001\Inclass P4DS Newton Night\RetailReport/retailmarket1.jpg)
+
+PT Komoditi Ria Kencana is a retail commodity trading company. The company have worldwide activities in the sourcing, transporting, storage, and financing of some commodities products to retail market. Their success is built upon knowledge of the market, reliability and independence
+
+They strive to be a reliable and competitive partner, working to contribute to their customers' and suppliers' expansion and development
+
+This report contains of explanatory product data analysis from PT Komoditi Ria Kencana including sales records data, P&L data and other detail data.
+
+# 2. Exploratory Data
+## 2.1 Data Inspection
+
+Before we do explanatory data analysis, we need to inspect our data and do some cleanings if it is necessary.
+
+Our first step is inputting the data.
+
+```{r}
+komoditi <- read.csv("data_input/retail.csv")
+```
+
+Our next step is inspecting the data.
+
+First, we have to check the dimension of the data by using function dim().
+
+```{r}
+dim(komoditi)
+```
+The data has dimension as follows:
+
+  + 9994 rows. It means that the company had 9994            transactions from 2014 to 2017
+  + 15 columns. It means that the data had recorded 15       variables, from Order ID to Product details.
+  
+Now we will cross check the dimension by calling the first 6 data and the last 6 data by using function head() and tail()
+
+```{r}
+head(komoditi)
+```
+
+```{r}
+tail(komoditi)
+```
+
+So the dimension is matched by using function dim() and head()/tail(). Great!
+
+The next inspection is to make sure the columns name of the data to ease our explanatory data analysis.
+
+```{r}
+names(komoditi)
+```
+
+Each Collumns label is as follows: 
+   + “Row.ID”, “Order.ID”, “Order.Date”, “Ship.Date”,       “Ship.Mode”, “Customer.ID”, “Segment”,“Product.ID”,      “Category”, “Sub.Category”, “Product.Name”, “Sales”,     “Quantity”, “Discount”, “Profit”
+  
+The last inspection is to check one by one the datatype of each columns. This inspection is needed to check if the datatype is in the correct form of the datatype required to do the explanatory data analysis. We use funcion str() to check the datatype of each columns.
+
+```{r}
+str(komoditi)
+```
+We found out that some of the columns are not in the correct datatype.
+
++ Order Date and Ship Date columns should be in Datetime datatype
++ Ship Mode, Segment, Category, and Sub.Category should be in Category/Factor datatype
+
+In the next process (data cleansing and coertion), we will change the incorrect datatypes to the correct datatypes
+
+
+## 2.2 Data Cleansing & Coertions
+
+Following up the last chapter, we need to change some of the incorrect datatypes to the correct datatype.
+
+```{r}
+komoditi$Segment      <- as.factor(komoditi$Segment)
+komoditi$Category     <- as.factor(komoditi$Category)
+komoditi$Order.Date   <- as.Date(komoditi$Order.Date, "%m/%d/%y")
+komoditi$Ship.Date    <- as.Date(komoditi$Ship.Date, "%m/%d/%y")
+komoditi$Ship.Mode    <- as.factor(komoditi$Ship.Mode)
+komoditi$Sub.Category <- as.factor(komoditi$Sub.Category)
+
+
+str(komoditi)
+
+```
+Now all the datatypes is already in the correct datatypes. The next process is to check if we have any missing values in the Data.
+
+```{r}
+colSums(is.na(komoditi))
+anyNA(komoditi)
+```
+So there are no missing values in the dataset. It is a great dataset!
+
+Next process is to subset some columns that has no value informations to the explanatory data analysis.
+
+```{r}
+Komoditi<- komoditi[,c(3:15)]
+head(komoditi)
+```
+
+Now, the dataset is ready to be processed and analyzed.
+
+
+# 3. Data Explanation
+
+Now we will show details from each columns to gain insights from each columns
+
+```{r}
+summary(Komoditi)
+```
+Here are insights we can get after we summarize the data:
+
++ The first order recorded in Jan 2014
++ Standard Class was the most popular shipping mode chosen by the customers and Same-day-delivery was the least popular
++ Customer's segment from PT Komoditi Ria Kencana are divided into 3 segments. Consumer Segment is the biggest segment while home office segment is the lowest segment.
++ Office Supply category was the best seller compare to others
++ In Sub category, Other stuff was the most favourite one then followed by Binders and paper. Art is the lowest
++ The company gained the average sales at 229.858; with max sales value at 22638.480 and minumum sales value at 0.444
++ Max quantity order was 14 within 4 years with average at 3.79
++ The company max amount of discount was 80%, but mean number of discount around 15%
++ The company had recorded a loss at 6599 and a gain 8399 as their profit with average profit at 28.657
+
+Now we check correlation between numerical data:
+
+```{r}
+cor(Komoditi$Sales,Komoditi$Profit)
+
+```  
+```{r}
+plot(Komoditi$Sales,Komoditi$Profit)
+abline(lm(Komoditi$Profit~Komoditi$Sales),col='red')
+```
+
+
+```{r}
+cor(Komoditi$Sales,Komoditi$Quantity)
+```
+
+```{r}
+plot(Komoditi$Quantity,Komoditi$Sales)
+abline(lm(Komoditi$Sales~Komoditi$Quantity),col='red')
+```
+```{r}
+cor(Komoditi$Profit,Komoditi$Quantity)
+```
+```{r}
+plot(Komoditi$Quantity,Komoditi$Profit)
+abline(lm(Komoditi$Profit~Komoditi$Quantity),col='red')
+```
+
+```{r}
+cor(Komoditi$Discount,Komoditi$Sales)
+```
+```{r}
+plot(Komoditi$Discount,Komoditi$Sales)
+abline(lm(Komoditi$Sales~Komoditi$Discount),col='red')
+```
+
+```{r}
+cor(Komoditi$Discount,Komoditi$Profit)
+```
+```{r}
+plot(Komoditi$Discount,Komoditi$Profit)
+abline(lm(Komoditi$Profit~Komoditi$Discount),col='red')
+```
+
+```{r}
+cor(Komoditi$Discount,Komoditi$Profit)
+```
+```{r}
+plot(Komoditi$Discount,Komoditi$Quantity)
+abline(lm(Komoditi$Quantity~Komoditi$Discount),col='red')
+```
+
+After we check the correlation between numerical data:
+
++ There are positive correlation between Sales and        Profit.It means that if the Sales is going up, the      profit will also go up
++ There are also positive correlation between Sales and   Quantity however the correlation is not significant
++ The correlation between Profit and Quantity is almost   zero. We can conclude there are no correlation betwee   these numerical data
++ There are negative correlation between Sales and        Discount. It means that if we give higher discount, it   doesn't mean that the Sales will go up.
++ There are negative correlation between Profit and       Discount. It means that if we give higher discount, it   doesn't mean that the Profit will go up.
++ There are negative correlation between Quanity and      Discount. It means that if we give higher discount,     it doesn't mean that the Quantity will go up.
+                                    
+# 4. Analysis
+
+Now we will do analysis to some business questions related to this data.
+
+1. Which Ship Mode that have provided the lowest and the highest sum of Sales,Profit & Quantity.
+
+```{r}
+library(ggplot2)
+komss <- aggregate.data.frame(x=list(komoditi$Sales,komoditi$Profit,komoditi$Quantity),
+                                     by=list(komoditi$Ship.Mode),FUN=sum)
+komss <- setNames(komss,c("Moda_Pengapalan","Penjualan","Keuntungan","Kuantiti"))
+
+ggplot(data=komss,mapping=aes(x=reorder(Moda_Pengapalan,Penjualan),
+                              y=Penjualan,fill=Moda_Pengapalan))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Penjualan,0)),vjust=2)+
+  labs(title="Moda Pengapalan vs Penjualan",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Moda Pengapalan",
+       y="Penjualan")
+
+```
+```{r}
+ggplot(data=komss,mapping=aes(x=reorder(Moda_Pengapalan,Keuntungan),
+                              y=Keuntungan,fill=Moda_Pengapalan))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Keuntungan,0)),vjust=2)+
+  labs(title="Moda Pengapalan vs Keuntungan",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Moda Pengapalan",
+       y="Keuntungan")
+```
+
+```{r}
+
+ggplot(data=komss,mapping=aes(x=reorder(Moda_Pengapalan,Kuantiti),
+                              y=Kuantiti,fill=Moda_Pengapalan))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=Kuantiti),vjust=2)+
+  labs(title="Moda Pengapalan vs Kuantiti",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Moda Pengapalan",
+       y="Kuantiti")
+```
+
+If we look at the plots above, we can analyse that in terms of Total Sales, Total Profit, and Total Quantity, most of buyers choose Standard Class as the shipping mode option while Same Day shipping mode option is the least favourite.
+
+
+2. Which Segment that have provided the lowest and the highest sum of Sales,Profit & Quantity.
+
+```{r}
+komseg <- aggregate.data.frame(x=list(komoditi$Sales,komoditi$Profit,komoditi$Quantity),
+                                     by=list(komoditi$Segment),FUN=sum)
+komseg <- setNames(komseg,c("Segmen","Penjualan","Keuntungan","Kuantiti"))
+
+
+ggplot(data=komseg,mapping=aes(x=reorder(Segmen,Penjualan),
+                              y=Penjualan,fill=Segmen))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Penjualan,0)),vjust=2)+
+  labs(title="Segmen vs Penjualan",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Segmen",
+       y="Penjualan")
+```
+```{r}
+ggplot(data=komseg,mapping=aes(x=reorder(Segmen,Keuntungan),
+                              y=Keuntungan,fill=Segmen))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Keuntungan,0)),vjust=2)+
+  labs(title="Segmen vs Keuntungan",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Segmen",
+       y="Keuntungan")
+```
+
+```{r}
+ggplot(data=komseg,mapping=aes(x=reorder(Segmen,Kuantiti),
+                              y=Kuantiti,fill=Segmen))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Kuantiti,0)),vjust=2)+
+  labs(title="Segmen vs Kuantiti",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Segmen",
+       y="Kuantiti")
+```
+
+If we look at the plots above, we can analyse that in terms of Total Sales, Total Profit, and Total Quantity, most of buyers choose to buy products in Consumer Segment while products from Home Office Segment is the least favourite.
+
+3. Which Category products that have provided the lowest and the highest sum of Sales,Profit & Quantity
+
+```{r}
+komcat <- aggregate.data.frame(x=list(komoditi$Sales,komoditi$Profit,komoditi$Quantity),
+                                     by=list(komoditi$Category),FUN=sum)
+komcat <- setNames(komcat,c("Kategori","Penjualan","Keuntungan","Kuantiti"))
+
+
+ggplot(data=komcat,mapping=aes(x=reorder(Kategori,Penjualan),
+                              y=Penjualan,fill=Kategori))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Penjualan,0)),vjust=2)+
+  labs(title="Kategori vs Penjualan",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Kategori",
+       y="Penjualan") 
+
+```
+```{r}
+ggplot(data=komcat,mapping=aes(x=reorder(Kategori,Keuntungan),
+                              y=Keuntungan,fill=Kategori))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Keuntungan,0)),vjust=2)+
+  labs(title="Kategori vs Keuntungan",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Kategori",
+       y="Keuntungan")
+```
+```{r}
+ggplot(data=komcat,mapping=aes(x=reorder(Kategori,Kuantiti),
+                              y=Kuantiti,fill=Kategori))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Kuantiti,0)),vjust=2)+
+  labs(title="Kategori vs Kuantiti",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Kategori",
+       y="Kuantiti")
+```
+
+If we look at the plots above, we can analyse that in terms of Total Quantity, the Office Supplies category is the most quantity with value of 22,906 items. However The Office Supplies category provided the least in terms of Sales and Profitability. The highest Sales and Profitablity comes from Technology Category with lesser quantity.
+
+4. Which Sub-Category products that have provided the lowest and the highest sum of Sales,Profit & Quantity
+
+```{r fig.width=15}
+komsub <- aggregate.data.frame(x=list(komoditi$Sales,komoditi$Profit,komoditi$Quantity),
+                                     by=list(komoditi$Sub.Category),FUN=sum)
+komsub <- setNames(komsub,c("Sub_Kategori","Penjualan","Keuntungan","Kuantiti"))
+
+ggplot(data=komsub,mapping=aes(x=reorder(Sub_Kategori,Penjualan),
+                              y=Penjualan,fill=Sub_Kategori))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Penjualan,0)),vjust=2)+
+  labs(title="Sub Kategori vs Penjualan",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Sub Kategori",
+       y="Penjualan") 
+```
+
+```{r fig.width=15}
+komsub <- aggregate.data.frame(x=list(komoditi$Sales,komoditi$Profit,komoditi$Quantity),
+                                     by=list(komoditi$Sub.Category),FUN=sum)
+komsub <- setNames(komsub,c("Sub_Kategori","Penjualan","Keuntungan","Kuantiti"))
+
+ggplot(data=komsub,mapping=aes(x=reorder(Sub_Kategori,Keuntungan),
+                              y=Keuntungan,fill=Sub_Kategori))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Keuntungan,0)),vjust=2)+
+  labs(title="Sub Kategori vs Keuntungan",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Sub Kategori",
+       y="Keuntungan") 
+```
+```{r fig.width=15}
+#There are products with negative profit. Now check the detail discount from these products
+
+loss <- subset(komoditi,subset=komoditi$Sub.Category=="Tables"|
+           komoditi$Sub.Category=="Bookcases"|
+           komoditi$Sub.Category=="Supplies")
+aggregate(loss$Discount~loss$Sub.Category+loss$Category+loss$Segment,FUN=mean)
+
+```
+
+
+```{r fig.width=15}
+komsub <- aggregate.data.frame(x=list(komoditi$Sales,komoditi$Profit,komoditi$Quantity),
+                                     by=list(komoditi$Sub.Category),FUN=sum)
+komsub <- setNames(komsub,c("Sub_Kategori","Penjualan","Keuntungan","Kuantiti"))
+
+ggplot(data=komsub,mapping=aes(x=reorder(Sub_Kategori,Kuantiti),
+                              y=Kuantiti,fill=Sub_Kategori))+
+  geom_col(show.legend = F)+
+  geom_text(aes(label=round(Kuantiti,0)),vjust=2)+
+  labs(title="Sub Kategori vs Kuantiti",
+       subtitle="PT Komoditi Ria Kencana 2014-2017",
+       x="Sub Kategori",
+       y="Kuantiti") 
+```
+If we look at the plots above, we can analyse as belows: 
+
++ In terms of Total Sales, Phones sub-category products provide the highest while Fasteners sub-category products    provide the least
++ In terms of Profitablity, Copiers sub-category products provide the highest profit. We found that some             sub-category product happened to be negative profit. These sub-category are Tables, Bookcases and Supplies.
++ In terms of Quantity, Binders sub-category products provide the highest while Copiers sub-category products        provide the least 
++ Copiers products provides the most profitability with the least quantity compare to others.
+
+# 5. Business Recommendation
+
+PT Komoditi Ria kencana has been doing business since 2014. We have analysed all the commercial transaction from 2014-2017 specifically in products. We come with below recommendation for better future business:
+
++ Standard Class Ship mode is the most preferred by buyers. PT Komoditi should keep this ship mode options since       this ship mode provides the most sales, profitability and quantity. Please consider to delete Same-Day ship and      ask buyers to move to First Class ship mode since First Class ship Mode  provide the better sales,                   profitablility annd quantity compare to Same-Day ship mode.
++ PT Komoditi do not need to change all the products Segments since all Segments provides positive sales, profit,      and quantity.
++ PT Komoditi do not need to change all the products Category since all Category provides positive sales, profit,      and quantity.However there are some things that PT Komoditi needs to be considered. In Furniture Category,           Although the sales is positively high, the profitability and the quantity sold is considerably low. PT Komoditi      should consider to source these products from another vendors with lesser price or lower the discount.
++ During Analysis of the sub-category products, we found that there are several products that cause negative           profit (Bookcases, Tables, and Supplies). Please consider to lower the discount this sub-category products or        source these products from another vendors with lesser price. We can consider also to delete "supplies"              sub-category product since the sales is low, the quantity is low, negative profit with almost zero discount.
++ PT Komoditi needs to sell more "Copiers" since this products provide the highest profitability with the least        quantity. Please consider to give a little bit more discount to grow the quantity, sales, and profitability.
+
