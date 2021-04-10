@@ -8,3 +8,6 @@ This report contains of explanatory product data analysis from PT Komoditi Ria K
 
 I also have publish this repository in Rpubs. Below the link:
 https://rpubs.com/syabaruddin/KomoditiRiaKencanaRetailEDA
+
+![image](https://user-images.githubusercontent.com/78594353/114280962-e6d49d00-9a65-11eb-8159-886509b45cfe.png)
+
