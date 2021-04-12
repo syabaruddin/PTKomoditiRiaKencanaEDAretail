@@ -10,4 +10,6 @@ I also have publish this repository in Rpubs. Below the link:
 https://rpubs.com/syabaruddin/KomoditiRiaKencanaRetailEDA
 
 ![image](https://user-images.githubusercontent.com/78594353/114280962-e6d49d00-9a65-11eb-8159-886509b45cfe.png)
+![image](https://user-images.githubusercontent.com/78594353/114333003-86328680-9b71-11eb-966b-5940711b0c56.png)
+
 
